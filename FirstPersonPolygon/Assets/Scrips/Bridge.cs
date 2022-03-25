@@ -4,44 +4,55 @@ using UnityEngine;
 
 public class Bridge : MonoBehaviour
 {
-    public GameObject txtToDisplay;             //display the UI text
-
-    private bool PlayerInZone;                  //check if the player is in trigger
-
+    public GameObject txtToDisplay;   
+    private bool playerInZone;                  
     public GameObject bridge;
 
     private void Start()
     {
-
-        PlayerInZone = false;                   //player not in zone       
+        playerInZone = false;            
         txtToDisplay.SetActive(false);
     }
 
     private void Update()
     {
-        if (PlayerInZone && Input.GetKeyDown(KeyCode.E))           //if in zone and press F key
+        //If player is in zone and "E" is pressed
+        if (playerInZone && Input.GetKeyDown(KeyCode.E))          
         {
-            bridge.SetActive(!bridge.activeSelf);
+            //Play button animation and sound
             gameObject.GetComponent<AudioSource>().Play();
             gameObject.GetComponent<Animator>().Play("switch");
+            //Start Coroutine for spawning bridge
+            StartCoroutine(SpawnBridge());
         }
+    }
+
+    IEnumerator SpawnBridge()
+    {
+        yield return new WaitForSeconds(0.5f);
+        //Activate bridge
+        bridge.SetActive(!bridge.activeSelf);
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.tag == "Player")     //if player in zone
+        //If player is in zone
+        if (other.gameObject.tag == "Player")     
         {
+            //Show text
             txtToDisplay.SetActive(true);
-            PlayerInZone = true;
+            playerInZone = true;
         }
     }
 
 
-    private void OnTriggerExit(Collider other)     //if player exit zone
+    private void OnTriggerExit(Collider other)    
     {
+        //If player exits zone
         if (other.gameObject.tag == "Player")
         {
-            PlayerInZone = false;
+            //Disable text
+            playerInZone = false;
             txtToDisplay.SetActive(false);
         }
     }
